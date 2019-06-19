@@ -1,0 +1,11 @@
+{
+    "python.linting.pylintEnabled": false,
+    "python.linting.pep8Enabled": true,
+    "python.linting.enabled": true,
+    "python.linting.pep8Args": [
+        "--ignore=E501", "--max-line-length=100",  
+     ],
+    "python.linting.ignorePatterns": [
+        ".md/*.py"
+    ]
+}
