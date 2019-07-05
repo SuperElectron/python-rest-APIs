@@ -4,6 +4,13 @@ services:
     build: ./web
     ports:
       - "5000:5000"
+    environment:
+          - FLASK_ENV=development
+          - APP_SETTINGS=config.DevelopmentConfig
+          # - DATABASE_URL=mongodb://db:27017
+          # - BANK_PW=123abc
+    volumes:
+      - ./web:/usr/src/app
     links:
       - db
   db:

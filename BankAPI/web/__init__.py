@@ -1,19 +1,37 @@
 #!/usr/bin/env python
+import os
 from flask import Flask, jsonify, request
 from flask_restful import Api, Resource
-from pymongo import MongoClient
+from pymongo import MongoClient, InsertOne
 import bcrypt
-
+import datetime
 
 # instantiate flask application
 app = Flask(__name__)
 api = Api(app)
 
 
-# setup database and db.Users
-client = MongoClient("mongodb://db:27017")
-db = client.MoneyManagementDB
-users = db["Users"]
+# initialize database
+def init_db():
+    # setup database and db.Users
+    # databaseURI = os.getenv('MONGO_DATABASE_URI')
+    databaseURI = "mongodb://db:27017"
+    client = MongoClient(databaseURI)
+    # create database name MoneyMan ...
+    db = client.MoneyManagementDB
+    users = db["Users"]
+
+    bankPassword = "123abc"
+    firstEntry = {
+        "Username": "BANK",
+        "Password": bcrypt.hashpw(bankPassword.encode('utf8'), bcrypt.gensalt()),
+        "Own": 0,
+        "Debt": 0,
+        "date": datetime.datetime.utcnow()
+    }
+
+    results = users.insert_one(firstEntry)
+    print(results.inserted_id)
 
 
 # verify the username exists
@@ -68,7 +86,7 @@ def verifyCredentials(username, password):
     return None, False
 
 
-# makes deposits, transfers, and payments 
+# makes deposits, transfers, and payments
 def updateAccount(username, balance):
     users.update({
         "Username": username

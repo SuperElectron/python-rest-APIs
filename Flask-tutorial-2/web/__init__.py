@@ -128,7 +128,7 @@ class Divide(Resource):
         y = postedData["y"]
         x = int(x)
         y = int(y)
-        z = (x*1.0) / y
+        z = (x * 1.0) / y
 
         retMap = {
             "Message": z,
