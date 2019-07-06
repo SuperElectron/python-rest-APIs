@@ -76,7 +76,7 @@ $ docker-compose up
 1. go to https://www.getpostman.com/products to download postman for free
 2. open postman and click 'import' on the top bar
 3. choose import from link
-4. https://www.getpostman.com/collections/6646049416f82b2c9463
+4. https://www.getpostman.com/collections/214cca47ec449328ddd5
 5. try 'home' to ensure it is up and running
 6. go to 'register BANK' and initialize username "BANK" to open up the banking app
 7. register two users, and test out the API functionality
