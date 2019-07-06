@@ -12,7 +12,7 @@ api = Api(app)
 
 
 # initialize database
-def init_db():
+def init_db(password):
     # setup database and db.Users
     # databaseURI = os.getenv('MONGO_DATABASE_URI')
     databaseURI = "mongodb://db:27017"
@@ -21,7 +21,7 @@ def init_db():
     db = client.MoneyManagementDB
     users = db["Users"]
 
-    bankPassword = "123abc"
+    bankPassword = password
     firstEntry = {
         "Username": "BANK",
         "Password": bcrypt.hashpw(bankPassword.encode('utf8'), bcrypt.gensalt()),
@@ -31,15 +31,19 @@ def init_db():
     }
 
     results = users.insert_one(firstEntry)
-    print(results.inserted_id)
+    print(results.inserted_id)  
 
 
 # verify the username exists
 def UserExist(username):
-    if users.find({"Username": username}).count() == 0:
-        return False
-    else:
-        return True
+    """ if not intialized, returns None, otherwise 'user exists' is True or False """
+    try:
+        exists = users.find({"Username": username}).count() != 0
+
+    except:
+        return None
+
+    return exists
 
 
 # verify correct hashed password
@@ -117,12 +121,18 @@ class Register(Resource):
         password = postedData["password"]
 
         # check for duplicate username
-        if UserExist(username):
+        exists = UserExist(username)
+
+        if exists is True:
             retJson = {
                 'status': 301,
                 'msg': 'Invalid username, user already exists'
             }
             return jsonify(retJson)
+
+        if exists is None:
+            init_db(password)
+            return jsonify(generateReturnDictionary(200, "Bank credentials inserted. Start banking!"))
 
         # create an account with credentials and own/debt ledger
         users.insert({
