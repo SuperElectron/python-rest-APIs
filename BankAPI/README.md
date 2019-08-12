@@ -101,35 +101,52 @@ Users
 
 
 ## Requirements for AWS EC2 Hosting
-*AWS EC2 must be configured on YOUR account with a .pem file downloaded*
+*Launch an EC2 instance* 
+- on AWS, go to service-> ec2
+- on the left sidebar look for network&security -> key-pair
+- create a new key pair, download it, and take note of your [path-to-file.pem]
+- on AWS, go to services->ec2 and click 'instances->instances' on the left sidebar
+- click 'launch instance'
+*Configuring the EC2 instance*
 - type: Ubuntu Server 18.04 LTS (HVM), SSD Volume Type , 64-bit (x86)
 - size: t2.micro 
 - Security groups => inbound: {type: ssh, protocol: TCP, Port range: 22, source: custom: 0.0.0.0/0}
 - Security groups => inbound: {type: all traffic, protocol: all, Port range: 0-65535, source: anywhere: 0.0.0.0/0, ::/0}
-- take note of "publicDNS(IPv4)" once your ubuntu machine is up and running
-```console 
-$ chmod 400 ~/[path-to-file.pem]
-$ ssh -i ~/[path-to-file.pem] [ubuntu@{publicDNS(IPv4)}]
+*Connecting to your EC2 instance with gitbash
+- click 'connect' and follow the instructions
 
+```bash
+- navigate to where you saved your [file.pem] that you downloaded from AWS key-pair
+$ chmod 400 ec2_web_practice.pem
+```
+- use the example to connect
+```bash
+$ ssh -i "file.pem" ubuntu@ec2-12-34-567-899.us-east-2.compute.amazonaws.com
+```
 - if prompted, enter 'yes' and you will be logged into the machine with the following in the console ...
 - to generate an ssh key, take note of login credentials and that you may or may not require email for github
 - you can press enter until generation is completed
-
-ubuntu@ip-xxx-xx-xx-xx:~$ ssh-keygen -t rsa -b 4096 -C
-
+```bash
+ubuntu@ip-xxx-xx-xx-xx:~$ cd ~/.ssh
+ubuntu@ip-xxx-xx-xx-xx:~/.ssh~$ ssh-keygen -t rsa -b 4096
+- can call it ec2 and give it no password if desired
+```
 OR 
+```bash
+ubuntu@ip-xxx-xx-xx-xx:~/.ssh~$ ssh-keygen -t rsa -b 4096 -C "your_email@gmail.com"
 
-ubuntu@ip-xxx-xx-xx-xx:~$ ssh-keygen -t rsa -b 4096 -C "your_email@gmail.com"
-
-ubuntu@ip-xxx-xx-xx-xx:~$ ls -al ~/.ssh
-ubuntu@ip-xxx-xx-xx-xx:~$ vim ~/.ssh/id_rsa.pub
-- copy the contents, exit VIM, and go to github.com/settings/keys and create a new ssh key
-
-ubuntu@ip-xxx-xx-xx-xx:~/$ git clone https://github.com/[username]/[repository_name_you_want_to_add] 
+ubuntu@ip-xxx-xx-xx-xx:~/.ssh~$ cat ec2_0.pub
+```
+- copy the contents, and go to github.com/settings/keys and create a new ssh key
+- go to your github page for this code repository click 'clone' and copy contents of 'clone with ssh'
+```bash
+ubuntu@ip-xxx-xx-xx-xx:~/$ git clone [paste-clone-contents]
 ubuntu@ip-xxx-xx-xx-xx:~/$ cd BankAPI
+```
 
-- now download "docker CE for Ubuntu" to the AWS EC2 ubuntu machine
 *setup the repository*
+- now download "docker CE for Ubuntu" to the AWS EC2 ubuntu machine
+```bash
 ubuntu@ip-xxx-xx-xx-xx:~/BankAPI$ sudo apt-get update
 
 ubuntu@ip-xxx-xx-xx-xx:~/BankAPI$ sudo apt-get install \
@@ -147,27 +164,32 @@ ubuntu@ip-xxx-xx-xx-xx:~/BankAPI$ sudo add-apt-repository \
    "deb [arch=amd64] https://download.docker.com/linux/ubuntu \
    $(lsb_release -cs) \
    stable"
+```
 
 *install docker CE for Ubuntu*
+```bash
 ubuntu@ip-xxx-xx-xx-xx:~/BankAPI$ sudo apt-get update
 ubuntu@ip-xxx-xx-xx-xx:~/BankAPI$ sudo apt-get install docker-ce docker-ce-cli containerd.io
 ubuntu@ip-xxx-xx-xx-xx:~/BankAPI$ sudo docker run hello-world
+```
 
 *install docker-compose on Linux*
+```bash
 ubuntu@ip-xxx-xx-xx-xx:~/BankAPI$ sudo curl -L "https://github.com/docker/compose/releases/download/1.24.0/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
 
 ubuntu@ip-xxx-xx-xx-xx:~/BankAPI$ sudo chmod +x /usr/local/bin/docker-compose
 
 ubuntu@ip-xxx-xx-xx-xx:~/BankAPI$ docker-compose --version
+```
 
 *run the application in the EC2 Ubuntu instance*
+```bash
 ubuntu@ip-xxx-xx-xx-xx:~/BankAPI$ ls
 [ db docker-compose.yml web ]
 
 ubuntu@ip-xxx-xx-xx-xx:~/BankAPI$ sudo docker-compose build
 
 ubuntu@ip-xxx-xx-xx-xx:~/BankAPI$ sudo docker-compose up
-
 ```
 
 ## Postman for EC2 instance
